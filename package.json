@@ -1,0 +1,17 @@
+{
+  "name": "tyler-sirens-crawler",
+  "version": "0.0.1",
+  "description": "Crawls the TylerPD 911-calls database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "d3": "^3.5.6",
+    "request": "^2.65.0",
+    "rethinkdb": "^2.1.1"
+  }
+}
