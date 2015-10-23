@@ -4,6 +4,7 @@ import Data.Aeson
 import Data.Aeson.Encode.Pretty
 import Data.Vector (fromList)
 import Control.Monad
+import Control.Applicative
 import Statistics.LinearRegression
 import qualified Data.ByteString.Lazy as ByteString
 
