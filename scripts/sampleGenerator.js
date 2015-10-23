@@ -11,7 +11,7 @@ r.connect(util.makeConnection())
 	.then(function(connection) {
 		return r.db('TylerSirens')
 			.table('calls')
-			.limit(100)
+			.limit(1000)
 			.run(connection)
 			.then(function(response) {
 				connection.close();
