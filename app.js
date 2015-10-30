@@ -1,7 +1,17 @@
-var r       = require('rethinkdb');
-var util    = require('./src/util.js');
-var Promise = require('bluebird');
-var request = Promise.promisify(require('request'));
+var r                  = require('rethinkdb');
+var util               = require('./src/util.js');
+var Promise            = require('bluebird');
+var trainingRegression = require('./training/scales.json');
+var request            = Promise.promisify(require('request'));
+
+var makeScale = function(scale) {
+    return function(call) {
+        return call * trainingRegression[scale].b + trainingRegression[scale].a;
+    };
+};
+
+var xScale = makeScale('geoXScale');
+var yScale = makeScale('geoYScale');
 
 var reqOptions = {
 	t: 'css',
@@ -19,16 +29,22 @@ request('http://p2c.tylerpolice.com/cad/callsnapshot.aspx')
 	// Then transform the data provided into the fields we want, turning timestamps into UNIX time
 	.then(function(response) {
 		return JSON.parse(response[1]).rows.map(function(entry) {
+            var lat = yScale(entry.geoY);
+            var lng = xScale(entry.geoX);
+			
 			return {
-				id: 	   parseInt(entry.id),
-				nature:    entry.nature,
-				address:   entry.address,
-				agency:    entry.agency,
-				service:   entry.service,
-				timeOpen:  (new Date(entry.starttime).getTime() / 1000),
-				timeClose: (new Date(entry.closetime).getTime() / 1000),
-				geoX: 	   parseFloat(entry.geox),
-				geoY: 	   parseFloat(entry.geoy)
+				id: 	 	parseInt(entry.id),
+				nature: 	entry.nature,
+				address: 	entry.address,
+				agency:	 	entry.agency,
+				service: 	entry.service,
+				timeOpen: 	(new Date(entry.starttime).getTime() / 1000),
+				timeClose: 	(new Date(entry.closetime).getTime() / 1000),
+				geoX: 	 	parseFloat(entry.geox),
+				geoY: 	 	parseFloat(entry.geoy),
+                lat: 		lat,
+                lng: 		lng,
+                location: 	r.point(lng, lat)
 			};
 		});
 	})
